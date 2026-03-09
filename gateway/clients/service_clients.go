@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -13,17 +14,27 @@ var authServiceURL = "http://localhost:8081"
 var orderServiceURL = "http://localhost:8082"
 var productServiceURL = "http://localhost:8083"
 
+// LoginRequest represents login payload
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"user@example.com"`
+	Password string `json:"password" example:"password123"`
 }
 
+// RegisterRequest represents register payload
 type RegisterRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username string `json:"username" example:"john"`
+	Email    string `json:"email" example:"john@example.com"`
+	Password string `json:"password" example:"password123"`
 }
 
+type ValidateRequest struct {
+	Token string `json:"token"`
+}
+
+type ValidateResponse struct {
+	UserID string `json:"user_id"`
+	Error  bool   `json:"error"`
+}
 func Login(data LoginRequest) (*http.Response, error) {
 
 	jsonData, _ := json.Marshal(data)
@@ -46,25 +57,29 @@ func Register(data RegisterRequest) (*http.Response, error) {
 	)
 }
 
-func ValidateToken(token string) bool {
-	req, _ := http.NewRequest(
-		"GET",
-		authServiceURL+"/validate",
-		nil,
-	)
-
+func ValidateTokenAndGetUserID(token string) (string, bool) {
+	req, _ := http.NewRequest("GET", authServiceURL+"/validate", nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return false
+		return "", false
 	}
 	defer resp.Body.Close()
 
-	return resp.StatusCode == http.StatusOK
-}
+	if resp.StatusCode != http.StatusOK {
+		return "", false
+	}
 
+	userIDBytes, _ := io.ReadAll(resp.Body)
+	userID := string(userIDBytes)
+	if userID == "" {
+		return "", false
+	}
+
+	return userID, true
+}
 func CreateOrder(body []byte) (*http.Response, error) {
 
 	return http.Post(
@@ -87,7 +102,6 @@ func CreateProduct(body []byte) (*http.Response, error) {
 		bytes.NewBuffer(body),
 	)
 }
-
 
 func GetProduct(id uuid.UUID) (*http.Response, error) {
 	url := fmt.Sprintf("%s/products/%s", productServiceURL, id)

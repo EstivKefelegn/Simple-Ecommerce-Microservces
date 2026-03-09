@@ -1,3 +1,8 @@
+// @title Ecommerce Microservices Gateway API
+// @version 1.0
+// @description API Gateway for Ecommerce Microservices (Auth, Product, Order)
+// @host localhost:8080
+// @BasePath /
 package main
 
 import (
