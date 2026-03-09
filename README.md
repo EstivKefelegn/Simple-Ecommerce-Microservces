@@ -6,4 +6,6 @@ Features
 
 REST API – Exposes endpoints to clients for user authentication, product browsing, and order management.
 
+Rabbitmq message broker - publish a user created event whcih helps notification service 
+
 gRPC – Facilitates efficient communication between microservices (e.g., checking stock from Product service when creating an order).
