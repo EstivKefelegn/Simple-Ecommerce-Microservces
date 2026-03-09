@@ -279,9 +279,10 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Ecommerce Microservices Gateway API",
-	Description:      "API Gateway for Ecommerce Microservices (Auth, Product, Order)",
+	Description:      "API Gateway for Ecommerce Microservices (UserAuth, Product, Order).\nIt supports 3 communication ways: REST API to communicate the client frontend with our services via the gateway, gRPC to communicate service-to-service (e.g., check product stock when an order is created), RabbitMQ to store user-created events.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+
 }
 
 func init() {

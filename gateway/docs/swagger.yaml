@@ -24,7 +24,9 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: API Gateway for Ecommerce Microservices (Auth, Product, Order)
+  description: |-
+    API Gateway for Ecommerce Microservices (UserAuth, Product, Order).
+    It supports 3 communication ways: REST API to communicate the client frontend with our services via the gateway, gRPC to communicate service-to-service (e.g., check product stock when an order is created), RabbitMQ to store user-created events.
   title: Ecommerce Microservices Gateway API
   version: "1.0"
 paths:
