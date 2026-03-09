@@ -13,15 +13,20 @@ func Routes() *chi.Mux {
 
 	r.Use(middleware.Logging)
 
-	r.Post("/login", handlers.Login)
+	r.Route("/auth", func(auth chi.Router) {
+		auth.Post("/login", handlers.Login)
+		auth.Post("/register", handlers.Register)
+	})
 
+	r.Get("/products", handlers.GetProducts)
+	r.Get("/product/{id}", handlers.GetProduct)
 	r.Group(func(protected chi.Router) {
-
+		
 		protected.Use(middleware.AuthMiddleware)
 
 		protected.Post("/orders", handlers.CreateOrder)
 
-		protected.Get("/products", handlers.GetProducts)
+		protected.Post("/products", handlers.CreateProduct)
 
 	})
 
